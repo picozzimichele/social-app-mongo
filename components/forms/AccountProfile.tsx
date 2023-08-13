@@ -33,6 +33,10 @@ export default function AccountProfile({ user, btnTitle }: Props) {
         },
     });
 
+    function handleImage(e: React.ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) {
+        e.preventDefault();
+    }
+
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof UserValidation>) {
         // Do something with the form values.
@@ -55,8 +59,14 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                                     <Image src="/assets/profile.svg" alt="profile photo" width={24} height={24} className="object-contain" />
                                 )}
                             </FormLabel>
-                            <FormControl>
-                                <Input placeholder="shadcn" {...field} />
+                            <FormControl className="flex-1 text-base-semibold text-gray-200">
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    placeholder="Upload a photo"
+                                    className="account-form_image-input"
+                                    onChange={(e) => handleImage(e, field.onChange)}
+                                />
                             </FormControl>
                             <FormDescription>This is your public display name.</FormDescription>
                             <FormMessage />
