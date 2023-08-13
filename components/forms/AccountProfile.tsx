@@ -1,0 +1,19 @@
+"use client";
+import React from "react";
+import { Form } from "../ui/form";
+
+interface Props {
+    user: {
+        id: string;
+        objectId: string;
+        username: string;
+        name: string;
+        bio: string;
+        image: string;
+    };
+    btnTitle: string;
+}
+
+export default function AccountProfile({ user, btnTitle }: Props) {
+    return <Form></Form>;
+}
