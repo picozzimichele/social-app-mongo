@@ -27,7 +27,7 @@ interface Props {
 
 export default function AccountProfile({ user, btnTitle }: Props) {
     const [files, setFiles] = useState<File[]>([]);
-    const { startUpload } = useUploadThing("media");
+    const { startUpload } = useUploadThing("imageUploader");
     const form = useForm({
         resolver: zodResolver(UserValidation),
         defaultValues: {
@@ -61,7 +61,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
     }
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof UserValidation>) {
+    async function onSubmit(values: z.infer<typeof UserValidation>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         const blob = values.profile_photo;
@@ -70,8 +70,13 @@ export default function AccountProfile({ user, btnTitle }: Props) {
 
         if (hasImageChanged) {
             // upload image
-            const imgRes = useUploadThing(blob);
+            const imgRes = await startUpload(files);
+            if (imgRes && imgRes[0].url) {
+                values.profile_photo = imgRes[0].url;
+            }
         }
+
+        //TODO: update user profile
     }
 
     return (
