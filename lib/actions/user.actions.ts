@@ -11,6 +11,7 @@ export async function updateUser({
     bio,
     image,
     path,
+    onboarded,
 }: {
     userId: string;
     username: string;
@@ -18,12 +19,13 @@ export async function updateUser({
     bio: string;
     image: string;
     path: string;
+    onboarded: boolean;
 }): Promise<void> {
     connectToDB();
     try {
         await User.findOneAndUpdate(
             { id: userId },
-            { username: username.toLowerCase(), name, bio, image, path },
+            { username: username.toLowerCase(), name, bio, image, path, onboarded },
             { upsert: true }
         );
 
@@ -32,5 +34,19 @@ export async function updateUser({
         }
     } catch (err: any) {
         throw new Error(`Error updating user: ${err.message}`);
+    }
+}
+
+export async function fetchUser(userId: string) {
+    try {
+        connectToDB();
+
+        return await User.findOne({ id: userId });
+        // .populate({
+        //     path: "communities",
+        //     model: "Community",
+        // });
+    } catch (err: any) {
+        throw new Error(`Error fetching user: ${err.message}`);
     }
 }
