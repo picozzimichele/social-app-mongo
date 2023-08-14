@@ -12,6 +12,8 @@ import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
+import { updateUser } from "@/lib/actions/user.actions";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
     user: {
@@ -28,6 +30,8 @@ interface Props {
 export default function AccountProfile({ user, btnTitle }: Props) {
     const [files, setFiles] = useState<File[]>([]);
     const { startUpload } = useUploadThing("imageUploader");
+    const router = useRouter();
+    const pathname = usePathname();
     const form = useForm({
         resolver: zodResolver(UserValidation),
         defaultValues: {
@@ -38,7 +42,10 @@ export default function AccountProfile({ user, btnTitle }: Props) {
         },
     });
 
-    function handleImage(e: React.ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) {
+    function handleImage(
+        e: React.ChangeEvent<HTMLInputElement>,
+        fieldChange: (value: string) => void
+    ) {
         e.preventDefault();
         const fileReader = new FileReader();
 
@@ -76,12 +83,29 @@ export default function AccountProfile({ user, btnTitle }: Props) {
             }
         }
 
-        //TODO: update user profile
+        //update user profile
+        await updateUser({
+            username: values.username,
+            name: values.name,
+            bio: values.bio,
+            image: values.profile_photo,
+            userId: user.id,
+            path: pathname,
+        });
+
+        if (pathname === "/profile/edit") {
+            router.back();
+        } else {
+            router.push("/");
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-start gap-10">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col justify-start gap-10"
+            >
                 {/* Image */}
                 <FormField
                     control={form.control}
@@ -90,9 +114,22 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                         <FormItem className="flex items-center gap-4">
                             <FormLabel className="account-form_image-label overflow-hidden">
                                 {field.value ? (
-                                    <Image src={field.value} alt="profile photo" width={96} height={96} priority className="rounded-full object-contain" />
+                                    <Image
+                                        src={field.value}
+                                        alt="profile photo"
+                                        width={96}
+                                        height={96}
+                                        priority
+                                        className="rounded-full object-contain"
+                                    />
                                 ) : (
-                                    <Image src="/assets/profile.svg" alt="profile photo" width={24} height={24} className="object-contain" />
+                                    <Image
+                                        src="/assets/profile.svg"
+                                        alt="profile photo"
+                                        width={24}
+                                        height={24}
+                                        className="object-contain"
+                                    />
                                 )}
                             </FormLabel>
                             <FormControl className="flex-1 text-base-semibold text-gray-200">
@@ -115,7 +152,11 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                         <FormItem className="flex flex-col gap-3 w-full">
                             <FormLabel className="text-base-semibold text-light-2">Name</FormLabel>
                             <FormControl>
-                                <Input type="text" className="account-form_input no-focus" {...field} />
+                                <Input
+                                    type="text"
+                                    className="account-form_input no-focus"
+                                    {...field}
+                                />
                             </FormControl>
                         </FormItem>
                     )}
@@ -126,9 +167,15 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                     name="username"
                     render={({ field }) => (
                         <FormItem className="flex flex-col gap-3 w-full">
-                            <FormLabel className="text-base-semibold text-light-2">Username</FormLabel>
+                            <FormLabel className="text-base-semibold text-light-2">
+                                Username
+                            </FormLabel>
                             <FormControl>
-                                <Input type="text" className="account-form_input no-focus" {...field} />
+                                <Input
+                                    type="text"
+                                    className="account-form_input no-focus"
+                                    {...field}
+                                />
                             </FormControl>
                         </FormItem>
                     )}
@@ -141,7 +188,11 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                         <FormItem className="flex flex-col gap-3 w-full">
                             <FormLabel className="text-base-semibold text-light-2">Bio</FormLabel>
                             <FormControl>
-                                <Textarea rows={10} className="account-form_input no-focus" {...field} />
+                                <Textarea
+                                    rows={10}
+                                    className="account-form_input no-focus"
+                                    {...field}
+                                />
                             </FormControl>
                         </FormItem>
                     )}
