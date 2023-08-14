@@ -20,7 +20,7 @@ export default async function Page() {
     return (
         <>
             <h1 className="head-text">Create Thread</h1>
-            <PostThread user={userInfo} btnTitle="fantastic" />
+            <PostThread userId={userInfo?._id} />
         </>
     );
 }

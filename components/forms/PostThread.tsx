@@ -17,32 +17,33 @@ import * as z from "zod";
 import { Textarea } from "../ui/textarea";
 import { usePathname, useRouter } from "next/navigation";
 import { ThreadValidation } from "@/lib/validations/thread";
+import { createThread } from "@/lib/actions/thread.actions";
 
 interface Props {
-    user: {
-        id: string;
-        objectId: string;
-        username: string;
-        name: string;
-        bio: string;
-        image: string;
-    };
-    btnTitle: string;
+    userId: string;
 }
 
-export default function PostThread({ user, btnTitle }: Props) {
+export default function PostThread({ userId }: Props) {
     const router = useRouter();
     const pathname = usePathname();
     const form = useForm({
         resolver: zodResolver(ThreadValidation),
         defaultValues: {
             thread: "",
-            accountId: user?.id,
+            accountId: userId,
         },
     });
 
-    const onSubmit = async (data: z.infer<typeof ThreadValidation>) => {
-        //await createThread(data);
+    //values are coming directly from reactUseForm
+    const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
+        await createThread({
+            text: values.thread,
+            author: userId,
+            communityId: null,
+            path: pathname,
+        });
+
+        router.push("/");
     };
 
     return (

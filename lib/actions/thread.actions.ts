@@ -13,18 +13,22 @@ interface Params {
 }
 
 export async function createThread({ text, author, communityId, path }: Params) {
-    connectToDB();
+    try {
+        connectToDB();
 
-    const createdThread = await Thread.create({
-        text,
-        author,
-        //TODO implement communities
-        community: null,
-    });
+        const createdThread = await Thread.create({
+            text,
+            author,
+            //TODO implement communities
+            community: null,
+        });
 
-    //Update user model
-    await User.findByIdAndUpdate(author, { $push: { threads: createdThread._id } });
+        //Update user model
+        await User.findByIdAndUpdate(author, { $push: { threads: createdThread._id } });
 
-    //this way it updated immediately in the FE
-    revalidatePath(path);
+        //this way it updated immediately in the FE
+        revalidatePath(path);
+    } catch (error: any) {
+        throw new Error(`failed to create a thread: ${error.message}`);
+    }
 }
