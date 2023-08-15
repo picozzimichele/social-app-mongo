@@ -13,9 +13,8 @@ interface Params {
 }
 
 export async function createThread({ text, author, communityId, path }: Params) {
+    connectToDB();
     try {
-        connectToDB();
-
         const createdThread = await Thread.create({
             text,
             author,
@@ -34,8 +33,8 @@ export async function createThread({ text, author, communityId, path }: Params) 
 }
 
 export async function fetchPosts(pageNumber = 1, pageSize = 20) {
+    connectToDB();
     try {
-        connectToDB();
         //Caluculate posts to skip depending on page number
         const skipAmount = (pageNumber - 1) * pageSize;
 
@@ -104,4 +103,15 @@ export async function fetchThreadById(threadId: string) {
     } catch (error: any) {
         throw new Error(`failed to fetch thread: ${error.message}`);
     }
+}
+
+export async function addCommentToThread(
+    threadId: string,
+    commentText: string,
+    userId: string,
+    path: string
+) {
+    connectToDB();
+    try {
+    } catch (error: any) {}
 }
