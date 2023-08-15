@@ -68,3 +68,40 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
         return { posts, isNext };
     } catch (error: any) {}
 }
+
+export async function fetchThreadById(threadId: string) {
+    connectToDB();
+    try {
+        //TODO populate communities
+        const thread = await Thread.findById(threadId)
+            .populate({
+                path: "author",
+                model: User,
+                select: "_id id name image",
+            })
+            .populate([
+                {
+                    path: "children", // Populate the children field
+                    populate: {
+                        path: "author", // Populate the author field within children
+                        model: User,
+                        select: "_id id parentId name image", // Select only _id and username fields of the author
+                    },
+                },
+                {
+                    path: "children", // Populate the children field
+                    model: Thread,
+                    populate: {
+                        path: "author",
+                        model: User,
+                        select: "_id id parentId name image",
+                    },
+                },
+            ])
+            .exec();
+
+        return thread;
+    } catch (error: any) {
+        throw new Error(`failed to fetch thread: ${error.message}`);
+    }
+}
