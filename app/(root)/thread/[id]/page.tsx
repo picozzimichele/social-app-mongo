@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 author={thread.author}
                 createdAt={thread.createdAt}
                 comments={thread.children}
-            ></ThreadCard>
+            />
 
             <div className="mt-7">
                 <Comment
@@ -36,6 +36,23 @@ export default async function Page({ params }: { params: { id: string } }) {
                     currentUserImage={user.imageUrl}
                     currentUserId={JSON.stringify(userInfo._id)}
                 />
+            </div>
+
+            <div className="mt-10">
+                {thread.children.map((comment: any) => (
+                    <ThreadCard
+                        key={comment._id}
+                        id={comment._id}
+                        currentUserId={comment?.id || ""}
+                        parentId={comment.parentId}
+                        content={comment.text}
+                        community={comment.community}
+                        author={comment.author}
+                        createdAt={comment.createdAt}
+                        comments={comment.children}
+                        isComment={true}
+                    />
+                ))}
             </div>
         </section>
     );
