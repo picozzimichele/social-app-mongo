@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     //checking the user based on the params passed by nextjs
     const userInfo = await fetchUser(params.id);
 
-    if (userInfo?.onboarded === false) {
+    if (userInfo.onboarded === false) {
         redirect("/onboarding");
     }
 

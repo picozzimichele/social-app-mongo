@@ -13,7 +13,7 @@ export default async function Page() {
 
     const userInfo = await fetchUser(user.id);
 
-    if (userInfo?.onboarded === false) {
+    if (userInfo.onboarded === false) {
         redirect("/onboarding");
     }
 

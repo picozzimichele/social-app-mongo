@@ -22,7 +22,15 @@ export default async function ThreadsTab({ currentUserId, accountId, accountType
                     parentId={thread.parentId}
                     content={thread.text}
                     community={thread.community}
-                    author={thread.author}
+                    author={
+                        accountType === "User"
+                            ? { name: result.name, image: result.image, id: result.id }
+                            : {
+                                  name: thread.author.name,
+                                  image: thread.author.image,
+                                  id: thread.author.id,
+                              }
+                    }
                     createdAt={thread.createdAt}
                     comments={thread.children}
                 />
