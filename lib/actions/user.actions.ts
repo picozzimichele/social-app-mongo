@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import User from "../models/user.models";
 import { connectToDB } from "../mongoose";
 import Thread from "../models/thread.models";
-import page from "@/app/(auth)/onboarding/page";
 import { FilterQuery, SortOrder } from "mongoose";
 
 export async function updateUser({

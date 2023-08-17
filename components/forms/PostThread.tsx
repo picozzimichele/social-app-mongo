@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
-import { useOrganization } from "@clerk/nextjs";
+import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { useOrganization } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { usePathname, useRouter } from "next/navigation";
+
 import {
     Form,
     FormControl,
@@ -13,10 +14,9 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import * as z from "zod";
-import { Textarea } from "../ui/textarea";
-import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
 import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
 
@@ -24,11 +24,15 @@ interface Props {
     userId: string;
 }
 
-export default function PostThread({ userId }: Props) {
+function PostThread({ userId }: Props) {
     const router = useRouter();
     const pathname = usePathname();
+
     const { organization } = useOrganization();
-    const form = useForm({
+
+    console.log(organization?.id, "organization");
+
+    const form = useForm<z.infer<typeof ThreadValidation>>({
         resolver: zodResolver(ThreadValidation),
         defaultValues: {
             thread: "",
@@ -36,7 +40,6 @@ export default function PostThread({ userId }: Props) {
         },
     });
 
-    //values are coming directly from reactUseForm
     const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
         await createThread({
             text: values.thread,
@@ -51,15 +54,14 @@ export default function PostThread({ userId }: Props) {
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
                 className="mt-10 flex flex-col justify-start gap-10"
+                onSubmit={form.handleSubmit(onSubmit)}
             >
-                {/* Name */}
                 <FormField
                     control={form.control}
                     name="thread"
                     render={({ field }) => (
-                        <FormItem className="flex flex-col gap-3 w-full">
+                        <FormItem className="flex w-full flex-col gap-3">
                             <FormLabel className="text-base-semibold text-light-2">
                                 Content
                             </FormLabel>
@@ -70,6 +72,7 @@ export default function PostThread({ userId }: Props) {
                         </FormItem>
                     )}
                 />
+
                 <Button type="submit" className="bg-primary-500">
                     Post Thread
                 </Button>
@@ -77,3 +80,5 @@ export default function PostThread({ userId }: Props) {
         </Form>
     );
 }
+
+export default PostThread;
