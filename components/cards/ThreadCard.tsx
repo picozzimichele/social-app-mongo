@@ -1,3 +1,4 @@
+import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -89,16 +90,31 @@ export default function ThreadCard({
                                     className="cursor-pointer object-contain"
                                 />
                             </div>
+                            {isComment && comments.length > 0 && (
+                                <Link href={`/thread/${id}`}>
+                                    <p className="mt-1 text-subdle-medium text-gray-1">
+                                        {comments.length} replies
+                                    </p>
+                                </Link>
+                            )}
                         </div>
-                        {isComment && comments.length > 0 && (
-                            <Link href={`/thread/${id}`}>
-                                <p className="mt-1 text-subdle-medium text-gray-1">
-                                    {comments.length} replies
-                                </p>
-                            </Link>
-                        )}
                     </div>
                 </div>
+                {!isComment && community && (
+                    <Link className="mt-5 flex items-center" href={`/communities/${community.id}`}>
+                        <p className="text-subtle-medium text-gray-1">
+                            {formatDateString(createdAt)} - {community.name} Community
+                        </p>
+
+                        <Image
+                            className="ml-1 rounded-full object-cover"
+                            src={community.image}
+                            alt="community logo"
+                            width={14}
+                            height={14}
+                        />
+                    </Link>
+                )}
             </div>
         </article>
     );
